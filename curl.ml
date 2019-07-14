@@ -460,6 +460,7 @@ type curlOption =
   | CURLOPT_MIMEPOST of curlMIMEPart list
   | CURLOPT_SSHKNOWNHOSTS of string
   | CURLOPT_SSHKEYFUNCTION of (curlKHMatch -> string -> curlKHStat)
+  | CURLOPT_WRITEDATA of Unix.file_descr
 
 type initOption =
   | CURLINIT_GLOBALALL
@@ -558,6 +559,9 @@ external pause : t -> pauseOption list -> unit = "caml_curl_pause"
 
 let set_writefunction conn closure =
   setopt conn (CURLOPT_WRITEFUNCTION closure)
+
+let set_writedata conn fd =
+  setopt conn (CURLOPT_WRITEDATA fd)
 
 let set_readfunction conn closure =
   setopt conn (CURLOPT_READFUNCTION closure)

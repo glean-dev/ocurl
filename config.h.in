@@ -1099,6 +1099,10 @@
    0 if you don't. */
 #undef HAVE_DECL_CURLOPT_WRITEFUNCTION
 
+/* Define to 1 if you have the declaration of `CURLOPT_WRITEFD', and to
+   0 if you don't. */
+#undef HAVE_DECL_CURLOPT_WRITEFD
+
 /* Define to 1 if you have the declaration of `CURLOPT_WRITEHEADER', and to 0
    if you don't. */
 #undef HAVE_DECL_CURLOPT_WRITEHEADER

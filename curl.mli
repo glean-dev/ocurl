@@ -473,6 +473,7 @@ type curlOption =
   (** The second argument to the passed function consists of the raw bytes of
       the public key sent by the remote host. If the function raises an
       exception the key will be rejected, and the connection will fail.**)
+  | CURLOPT_WRITEDATA of Unix.file_descr
 
 type initOption =
   | CURLINIT_GLOBALALL
@@ -574,6 +575,7 @@ val pause : t -> pauseOption list -> unit
   and transfer will be aborted. *)
 
 val set_writefunction : t -> (string -> int) -> unit
+val set_writedata : t -> Unix.file_descr -> unit
 val set_readfunction : t -> (int -> string) -> unit
 (** [readfunction n] should return string of length at most [n], otherwise
   transfer will be aborted (as if with exception) *)

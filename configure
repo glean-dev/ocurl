@@ -4942,6 +4942,19 @@ fi
 cat >>confdefs.h <<_ACEOF
 #define HAVE_DECL_CURLOPT_WRITEFUNCTION $ac_have_decl
 _ACEOF
+ac_fn_c_check_decl "$LINENO" "CURLOPT_WRITEDATA" "ac_cv_have_decl_CURLOPT_WRITEDATA" "
+#include \"curl/curl.h\"
+
+"
+if test "x$ac_cv_have_decl_CURLOPT_WRITEDATA" = xyes; then :
+  ac_have_decl=1
+else
+  ac_have_decl=0
+fi
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_DECL_CURLOPT_WRITEDATA $ac_have_decl
+_ACEOF
 ac_fn_c_check_decl "$LINENO" "CURLOPT_READFUNCTION" "ac_cv_have_decl_CURLOPT_READFUNCTION" "
 #include \"curl/curl.h\"
 

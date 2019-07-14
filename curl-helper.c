@@ -116,6 +116,7 @@ struct Connection
 #if HAVE_DECL_CURLOPT_MIMEPOST
     curl_mime *curl_MIMEPOST;
 #endif
+    FILE *fp;
 };
 
 typedef struct CURLErrorMapping CURLErrorMapping;
@@ -649,6 +650,7 @@ static Connection* allocConnection(CURL* h)
 #if HAVE_DECL_CURLOPT_MIMEPOST
     connection->curl_MIMEPOST = NULL;
 #endif
+    connection->fp = NULL;
 
     return connection;
 }
@@ -1438,6 +1440,26 @@ SETOPT_BOOL( UPLOAD)
 SETOPT_BOOL( POST)
 SETOPT_BOOL( FTPLISTONLY)
 SETOPT_BOOL( FTPAPPEND)
+
+
+static void handle_WRITEDATA(Connection *conn, value fd)
+{
+    CAMLparam1(fd);
+    CURLcode result = CURLE_OK;
+
+    FILE* fp = fdopen(Int_val(fd), "w");
+
+    setvbuf(fp, NULL, _IONBF, 0);
+
+    result = curl_easy_setopt(conn->handle, CURLOPT_WRITEDATA, fp);
+
+    conn->fp = fp;
+
+    if (result != CURLE_OK)
+        raiseError(conn, result);
+
+    CAMLreturn0;
+}
 
 
 static void handle_NETRC(Connection *conn, value option)
@@ -3207,6 +3229,7 @@ CURLOptionMapping implementedOptionMap[] =
 #endif
   CURLOPT(SSH_KNOWNHOSTS),
   CURLOPT(SSH_KEYFUNCTION),
+  CURLOPT(WRITEDATA),
 };
 
 value caml_curl_easy_setopt(value conn, value option)
@@ -4055,6 +4078,7 @@ static CURL* curlm_remove_finished(CURLM* multi_handle, CURLcode* result)
       {
         /*caml_failwith("curlm_remove_finished");*/
       }
+
       return easy_handle;
     }
   }
@@ -4092,6 +4116,11 @@ value caml_curlm_remove_finished(value v_multi)
     v_tuple = caml_alloc(2, 0);
     Store_field(v_tuple,0,v_easy);
     Store_field(v_tuple,1,Val_int(result)); /* CURLcode */
+
+    if (conn->fp != NULL){
+      fclose(conn->fp);
+    }
+
     CAMLreturn(Val_some(v_tuple));
   }
 }
