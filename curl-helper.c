@@ -30,6 +30,7 @@
 #include <caml/unixsupport.h>
 #include <caml/custom.h>
 #include <caml/threads.h>
+#include <caml/bigarray.h>
 
 #ifndef CAMLdrop
 #define CAMLdrop caml_local_roots = caml__frame
@@ -792,16 +793,21 @@ static size_t cb_WRITEFUNCTION(char *ptr, size_t size, size_t nmemb, void *data)
     caml_leave_blocking_section();
 
     CAMLparam0();
-    CAMLlocal2(result, str);
+    CAMLlocal2(result, ba);
+
     Connection *conn = (Connection *)data;
 
     checkConnection(conn);
 
-    str = ml_copy_string(ptr,size*nmemb);
+    char* ba_data = malloc(nmemb);
+    memcpy(ba_data, ptr, nmemb);
 
-    result = caml_callback_exn(Field(conn->ocamlValues, Ocaml_WRITEFUNCTION), str);
+    ba = caml_ba_alloc_dims(CAML_BA_MANAGED|CAML_BA_C_LAYOUT|CAML_BA_UINT8, 1, ba_data, nmemb);
 
-    size_t r = Is_exception_result(result) ? 0 : Int_val(result);
+    result = caml_callback_exn(Field(conn->ocamlValues, Ocaml_WRITEFUNCTION), ba);
+
+    size_t r = Is_exception_result(result) ? 0 : nmemb;
+
     CAMLdrop;
 
     caml_enter_blocking_section();

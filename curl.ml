@@ -316,7 +316,7 @@ type curlPostRedir =
 | REDIR_POST_303
 
 type curlOption =
-  | CURLOPT_WRITEFUNCTION of (string -> int)
+  | CURLOPT_WRITEFUNCTION of ((char, Bigarray.int8_unsigned_elt, Bigarray.c_layout) Bigarray.Array1.t -> unit)
   | CURLOPT_READFUNCTION of (int -> string)
   | CURLOPT_INFILESIZE of int
   | CURLOPT_URL of string

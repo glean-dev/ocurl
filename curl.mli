@@ -326,7 +326,7 @@ type curlPostRedir =
 | REDIR_POST_303 (** added in libcurl 7.26.0 *)
 
 type curlOption =
-  | CURLOPT_WRITEFUNCTION of (string -> int)
+  | CURLOPT_WRITEFUNCTION of ((char, Bigarray.int8_unsigned_elt, Bigarray.c_layout) Bigarray.Array1.t -> unit)
   | CURLOPT_READFUNCTION of (int -> string)
   | CURLOPT_INFILESIZE of int
   | CURLOPT_URL of string
@@ -574,7 +574,7 @@ val pause : t -> pauseOption list -> unit
   Any exception raised in callback function will be silently caught and discared,
   and transfer will be aborted. *)
 
-val set_writefunction : t -> (string -> int) -> unit
+val set_writefunction : t -> ((char, Bigarray.int8_unsigned_elt, Bigarray.c_layout) Bigarray.Array1.t -> unit) -> unit
 val set_writedata : t -> Unix.file_descr -> unit
 val set_readfunction : t -> (int -> string) -> unit
 (** [readfunction n] should return string of length at most [n], otherwise
@@ -787,7 +787,7 @@ class handle :
     method cleanup : unit
     method perform : unit
 
-    method set_writefunction : (string -> int) -> unit
+    method set_writefunction : ((char, Bigarray.int8_unsigned_elt, Bigarray.c_layout) Bigarray.Array1.t -> unit) -> unit
     method set_readfunction : (int -> string) -> unit
     method set_infilesize : int -> unit
     method set_url : string -> unit
